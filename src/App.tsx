@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import { MoviePage } from "./components/MoviePage";
+import { PopularMoviesPage } from "./components/PopularMovies";
+import { SearchPage } from "./components/Search";
+import { Discover } from "./components/Discover";
+import { Header } from "./components/Header";
+import { ConfigProvider, theme, Button } from "antd";
+import { DiscoverByGenre } from "./components/DiscoverByGenre";
 
-function App() {
+const { defaultAlgorithm, darkAlgorithm } = theme;
+
+const App: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleClick = () => {
+    setIsDarkMode((previousValue) => !previousValue);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ConfigProvider
+        theme={{
+          algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
+        }}
+      >
+        <div className={`app ${isDarkMode ? "dark-theme" : "light-theme"}`}>
+          <Header />
+          <div className="links">
+            <Link to={`/discover`} className="link">
+              Discover by categories
+            </Link>
+            <Link to={`/popular`} className="link">
+              Most popular
+            </Link>
+          </div>
+
+          <div className="theme-toggler">
+            <Button onClick={handleClick}>
+              Change Theme to {isDarkMode ? "Light" : "Dark"}
+            </Button>
+          </div>
+          <Routes>
+            <Route path="/" Component={SearchPage} />
+            <Route path="/popular" Component={PopularMoviesPage} />
+            <Route path="/movie/:id" Component={MoviePage} />
+            <Route path="/discover" Component={Discover} />
+            <Route path="/discover/:id" Component={DiscoverByGenre} />
+          </Routes>
+        </div>
+      </ConfigProvider>
+    </Router>
   );
-}
+};
 
 export default App;
